@@ -1,13 +1,28 @@
 import { useState, useEffect } from "react";
+import { Button } from "kitchn";
 
+type WeatherData = {
+  current: {
+    temp_c: number;
+    feelslike_c: number;
+    condition: {
+      text: string;
+      icon: string;
+    };
+    wind_kph: number;
+    humidity: number;
+  };
+};
 
 const App: React.FC = () => {
-  const [weather, setWeather] = useState(null); // Pour stocker les données météo
-  const [loading, setLoading] = useState(true); // Indique si les données sont en cours de chargement
-  const [error, setError] = useState(null); // Pour capturer les erreurs
+  const [weather, setWeather] = useState<WeatherData | null>(null); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
 
-  useEffect(() => {
+ 
     const fetchWeather = async () => {
+      setLoading(true); 
+      setError(null);
       try {
         const response = await fetch(
           `http://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=paris&aqi=no&lang=fr`
@@ -15,17 +30,17 @@ const App: React.FC = () => {
         if (!response.ok) {
           throw new Error("Erreur lors de la récupération des données.");
         }
-        const data = await response.json(); // Convertit la réponse en JSON
-        setWeather(data); // Stocke les données dans l'état `weather`
-      } catch (err) {
-        setError(err.message); // Capture les erreurs
+        const data = await response.json();
+        setWeather(data); 
+      } catch (err: any) {
+        setError(err.message); 
       } finally {
-        setLoading(false); // Arrête l'indicateur de chargement
+        setLoading(false);
       }
     };
-  
+    useEffect(() => {
     fetchWeather();
-  }, []); // Le tableau vide [] signifie que l'effet s'exécute une seule fois au chargement
+  }, []); 
 
   return (
     <div>
@@ -46,10 +61,14 @@ const App: React.FC = () => {
           <p>Humidité : {weather?.current?.humidity} %</p>
         </div>
       )}
+
+    <Button onClick={fetchWeather} variant="shadow" size="large" style={{ marginTop: "20px" }}>
+        Rafraîchir
+      </Button>
     </div>
+
   );
-  
-  
+
 };
 
 
