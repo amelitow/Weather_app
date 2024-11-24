@@ -1,6 +1,6 @@
 services:
   web:
-    image: node:18
+    image: node:20.16.0
     ports:
       - 5173:5173
     volumes:
